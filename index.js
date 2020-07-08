@@ -116,12 +116,16 @@ function processUser(id) {
 const usersClone = users.slice();
 
 async function startRecursive(usersClone) {
-  if (!usersClone.length) return 0;
-  const arr = usersClone.splice(0, 10);
-  const arrPromise = arr.map(el => processUser(el.id));
-  const res = await Promise.all(arrPromise);
-  const resSum = res.reduce((el, acc) => (acc += el), 0);
-  return startRecursive(usersClone).then(sum => sum + resSum);
+  try {
+    if (!usersClone.length) return 0;
+    const arr = usersClone.splice(0, 10);
+    const arrPromise = arr.map(el => processUser(el.id));
+    const res = await Promise.all(arrPromise);
+    const resSum = res.reduce((el, acc) => (acc += el), 0);
+    return startRecursive(usersClone).then(sum => sum + resSum);
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
 startRecursive(usersClone).then(total => {
